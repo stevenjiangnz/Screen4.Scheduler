@@ -5,6 +5,13 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Screen.SchedulerFunctionProj", "Screen.SchedulerFunctionProj\Screen.SchedulerFunctionProj.csproj", "{994248C7-6976-4CE5-BC90-ACE36BB9E841}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{3AF6B33C-6936-4CEF-8938-9B2698A10ADD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflow", "Workflow", "{BA0D981D-EF16-48A5-A038-BCA021BDC9B4}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\main_screen4schedulerfunction.yml = ..\.github\workflows\main_screen4schedulerfunction.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +25,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BA0D981D-EF16-48A5-A038-BCA021BDC9B4} = {3AF6B33C-6936-4CEF-8938-9B2698A10ADD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD63FF16-83A7-45C1-8236-F2DCC15C1C1B}
