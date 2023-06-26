@@ -5,10 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Screen.SchedulerFunctionProj
 {
-    public class Function1
+    public class SchedulerFunction
     {
-        [FunctionName("Function1")]
-        public void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
+        [FunctionName("scheduler")] 
+        public void Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
