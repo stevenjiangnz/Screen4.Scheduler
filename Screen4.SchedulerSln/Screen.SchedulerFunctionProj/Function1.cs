@@ -8,7 +8,7 @@ namespace Screen.SchedulerFunctionProj
     public class SchedulerFunction
     {
         [FunctionName("scheduler")] 
-        public void Run([TimerTrigger("0 */1 * * * *  ")]TimerInfo myTimer, ILogger log)
+        public void Run([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
