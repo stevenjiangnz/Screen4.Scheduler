@@ -49,10 +49,12 @@ namespace Screen.SchedulerFunctionProj
 
 
         [FunctionName("schedulerweekly")]
-        public static async Task RunWeekly([TimerTrigger("0 0 8 * * 6")] TimerInfo myTimer, ILogger log)
+        public static async Task RunWeeklyProcess([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
         {
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
+
+            log.LogInformation("in RunWeeklyProcess " + currentTime.ToString());
 
             if (currentTime.DayOfWeek == DayOfWeek.Saturday && currentTime.Hour == 8)
             {
