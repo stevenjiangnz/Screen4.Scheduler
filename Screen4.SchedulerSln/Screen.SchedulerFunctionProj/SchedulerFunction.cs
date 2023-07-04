@@ -16,7 +16,7 @@ namespace Screen.SchedulerFunctionProj
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
 
-            log.LogInformation("in RunDailyProcess " + currentTime.ToString());
+            log.LogInformation("in RunDailyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
 
             // Check if the current hour is 18 (6 PM)
             if (currentTime.Hour == 18)
@@ -54,7 +54,7 @@ namespace Screen.SchedulerFunctionProj
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
 
-            log.LogInformation("in RunWeeklyProcess " + currentTime.ToString());
+            log.LogInformation("in RunWeeklyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
 
             if (currentTime.DayOfWeek == DayOfWeek.Saturday && currentTime.Hour == 8)
             {
