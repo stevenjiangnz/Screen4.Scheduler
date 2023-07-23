@@ -21,29 +21,17 @@ namespace Screen.SchedulerFunctionProj
             // Check if the current hour is 18 (6 PM)
             if (currentTime.Hour == 18)
             {
+                // call Etoro scan
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+                string asxEndpoint = Environment.GetEnvironmentVariable("ET_ASX_PROCESS_URL");
+                await scheduleManager.RunEtAsxProcess(asxEndpoint);
+
                 // Log a message indicating that the scheduler was triggered
                 log.LogInformation("Hourly scan scheduler triggered");
 
                 // Get the process URL from the environment variables
                 string processUrl = Environment.GetEnvironmentVariable("PROCESS_URL");
-
-                // Send a GET request to the specified URL using HttpClient
-                using (HttpClient client = new HttpClient())
-                {
-                    HttpResponseMessage response = await client.GetAsync(processUrl);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // Read the response content and log it
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        log.LogInformation("Response: " + responseContent);
-                    }
-                    else
-                    {
-                        // Log an error message if the request fails
-                        log.LogError("Request failed with status code: " + response.StatusCode);
-                    }
-                }
+                await scheduleManager.GenericRequestClient(processUrl);
             }
         }
 
