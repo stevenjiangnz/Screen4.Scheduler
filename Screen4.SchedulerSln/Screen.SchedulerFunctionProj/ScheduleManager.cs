@@ -2,6 +2,7 @@
 using Screen.SchedulerFunctionProj.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -13,28 +14,26 @@ namespace Screen.SchedulerFunctionProj
     {
         private readonly ILogger _logger;
         private string _etUrlTemplate;
-        public ScheduleManager(ILogger log) {
+        public ScheduleManager(ILogger log)
+        {
             this._logger = log;
 
             this._etUrlTemplate = Environment.GetEnvironmentVariable("ET_AUS_URL_TEMPLATE");
         }
-        public async Task RunEtAsxProcess(string endpoint)
-        {
-            this._logger.LogInformation("About to run ASX Etoro Process...");
-            await GenericRequestClient(endpoint);
-            this._logger.LogInformation("After ran ASX Etoro Process...");
-        }
 
         public async Task RunEtAusProcessJobs()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
             this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Aus jobs");
             string processUrl = Environment.GetEnvironmentVariable("PROCESS_URL");
             string etAsxUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_ASX_URL_SETTING"));
 
-            List<string> urls = new List<string> { 
+            List<string> urls = new List<string> {
                 processUrl,
                 etAsxUrl
-            }; 
+            };
 
             this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
 
@@ -46,8 +45,108 @@ namespace Screen.SchedulerFunctionProj
             }
 
             await Task.WhenAll(tasks);
-            this._logger.LogInformation($"All jobs done");
 
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        public async Task RunEtEuProcessJobs()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
+            string etEtfukUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_ETFUK_URL_SETTING"));
+            string etUkUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_UK_URL_SETTING"));
+            string etDeUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_DE_URL_SETTING"));
+            string etPaUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_PA_URL_SETTING"));
+            string etMiUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_MI_URL_SETTING"));
+            string etEuUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_EU_URL_SETTING"));
+
+            List<string> urls = new List<string> {
+                etEtfukUrl,
+                etUkUrl,
+                etDeUrl,
+                etPaUrl,
+                etMiUrl,
+                etEuUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        public async Task RunEtHkProcessJobs()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
+            string etHkUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_HK_URL_SETTING"));
+
+            List<string> urls = new List<string> {
+                etHkUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        public async Task RunEtUsProcessJobs()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
+            string etEtfusUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_ETFUS_URL_SETTING"));
+            string etNasdaqUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_NASDAQ_URL_SETTING"));
+            string etNyseUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_NYSE_URL_SETTING"));
+
+            List<string> urls = new List<string> {
+                etEtfusUrl,
+                etNasdaqUrl, 
+                etNyseUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
         public string getEtAccessUrl(string settingString)
@@ -56,7 +155,7 @@ namespace Screen.SchedulerFunctionProj
 
             var settings = settingString.Split(';');
 
-            if(settings.Length != 2)
+            if (settings.Length != 2)
             {
                 throw new ArgumentException($"Invalid setting string: {settingString}");
             }
@@ -65,11 +164,16 @@ namespace Screen.SchedulerFunctionProj
             return url;
         }
 
+
         public async Task GenericRequestClient(string url)
         {
+            Stopwatch stopwatch = new Stopwatch();
             try
             {
                 this._logger.LogInformation($"About to request: {url}");
+
+                stopwatch.Start(); // Start the stopwatch
+
                 // Send a GET request to the specified URL using HttpClient
                 using (HttpClient client = new HttpClient())
                 {
@@ -91,15 +195,21 @@ namespace Screen.SchedulerFunctionProj
                     }
                 }
 
-                this._logger.LogInformation($"Finish request: {url}");
+                stopwatch.Stop(); // Stop the stopwatch
+
+                this._logger.LogInformation($"Finish request: {url} in {stopwatch.Elapsed.TotalSeconds} seconds.");
             }
             catch (TaskCanceledException ex)
             {
-                this._logger.LogError($"Request to {url} timed out. \n {ex.ToString()}");
+                stopwatch.Stop(); // Stop the stopwatch in case of an exception
+
+                this._logger.LogError($"Request to {url} timed out after {stopwatch.Elapsed.TotalSeconds} seconds. \n {ex.ToString()}");
             }
             catch (Exception ex)
             {
-                this._logger.LogError($"Error send request {url} \n {ex.ToString()}");
+                stopwatch.Stop(); // Stop the stopwatch in case of an exception
+
+                this._logger.LogError($"Error send request {url} after {stopwatch.Elapsed.TotalSeconds} seconds. \n {ex.ToString()}");
             }
         }
 

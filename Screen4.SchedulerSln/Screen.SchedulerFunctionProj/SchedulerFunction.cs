@@ -26,15 +26,8 @@ namespace Screen.SchedulerFunctionProj
             {
                 // call Etoro scan
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                string asxEndpoint = Environment.GetEnvironmentVariable("ET_ASX_PROCESS_URL");
-                await scheduleManager.RunEtAsxProcess(asxEndpoint);
 
-                // Log a message indicating that the scheduler was triggered
-                log.LogInformation("Hourly scan scheduler triggered");
-
-                // Get the process URL from the environment variables
-                string processUrl = Environment.GetEnvironmentVariable("PROCESS_URL");
-                await scheduleManager.GenericRequestClient(processUrl);
+                await scheduleManager.RunEtAusProcessJobs();
             }
         }
 
@@ -79,7 +72,7 @@ namespace Screen.SchedulerFunctionProj
         {
             ScheduleManager scheduleManager = new ScheduleManager(log);
 
-            await scheduleManager.RunEtAusProcessJobs();
+            await scheduleManager.RunEtUsProcessJobs();
 
             return new OkObjectResult("done test");
 
