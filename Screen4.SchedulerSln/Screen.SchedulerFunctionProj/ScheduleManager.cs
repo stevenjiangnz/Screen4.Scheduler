@@ -73,6 +73,9 @@ namespace Screen.SchedulerFunctionProj
                 // Send a GET request to the specified URL using HttpClient
                 using (HttpClient client = new HttpClient())
                 {
+                    // Set timeout to 1200 seconds
+                    client.Timeout = TimeSpan.FromSeconds(1200);
+
                     HttpResponseMessage response = await client.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
@@ -89,13 +92,17 @@ namespace Screen.SchedulerFunctionProj
                 }
 
                 this._logger.LogInformation($"Finish request: {url}");
-
             }
-            catch (Exception ex) {
+            catch (TaskCanceledException ex)
+            {
+                this._logger.LogError($"Request to {url} timed out. \n {ex.ToString()}");
+            }
+            catch (Exception ex)
+            {
                 this._logger.LogError($"Error send request {url} \n {ex.ToString()}");
             }
-
         }
+
 
     }
 }
