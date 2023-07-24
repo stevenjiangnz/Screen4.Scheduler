@@ -4,6 +4,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace Screen.SchedulerFunctionProj
 {
@@ -16,7 +19,7 @@ namespace Screen.SchedulerFunctionProj
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
 
-            log.LogInformation("in RunDailyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
+            log.LogInformation("In RunDailyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
 
             // Check if the current hour is 18 (6 PM)
             if (currentTime.Hour == 18)
@@ -66,6 +69,20 @@ namespace Screen.SchedulerFunctionProj
                 }
 
             }
+        }
+
+        [FunctionName("test")]
+        public static async Task<IActionResult> Test(
+    [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+                    HttpRequest req,
+    Microsoft.Extensions.Logging.ILogger log)
+        {
+            ScheduleManager scheduleManager = new ScheduleManager(log);
+
+            await scheduleManager.RunEtAusProcessJobs();
+
+            return new OkObjectResult("done test");
+
         }
     }
 }
