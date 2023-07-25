@@ -51,103 +51,59 @@ namespace Screen.SchedulerFunctionProj
             this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
         }
 
-        public async Task RunEtEuProcessJobs()
+        public async Task RunJobs(List<string> environmentVariables)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start(); // Start the stopwatch
 
-            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
-            string etEtfukUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_ETFUK_URL_SETTING"));
-            string etUkUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_UK_URL_SETTING"));
-            string etDeUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_DE_URL_SETTING"));
-            string etPaUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_PA_URL_SETTING"));
-            string etMiUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_MI_URL_SETTING"));
-            string etEuUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_EU_URL_SETTING"));
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start jobs");
 
-            List<string> urls = new List<string> {
-                etEtfukUrl,
-                etUkUrl,
-                etDeUrl,
-                etPaUrl,
-                etMiUrl,
-                etEuUrl
-            };
+            List<string> urls = environmentVariables
+                .Select(Environment.GetEnvironmentVariable)
+                .Select(getEtAccessUrl)
+                .ToList();
 
             this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
 
-            List<Task> tasks = new List<Task>();
-
-            foreach (string url in urls)
-            {
-                tasks.Add(GenericRequestClient(url));
-            }
+            List<Task> tasks = urls.Select(GenericRequestClient).ToList();
 
             await Task.WhenAll(tasks);
 
             stopwatch.Stop(); // Stop the stopwatch
 
             this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        public async Task RunEtEuProcessJobs()
+        {
+            await RunJobs(new List<string>
+            {
+                "ET_ETFUK_URL_SETTING",
+                "ET_UK_URL_SETTING",
+                "ET_DE_URL_SETTING",
+                "ET_PA_URL_SETTING",
+                "ET_MI_URL_SETTING",
+                "ET_EU_URL_SETTING"
+            });
         }
 
         public async Task RunEtHkProcessJobs()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start(); // Start the stopwatch
-
-            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
-            string etHkUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_HK_URL_SETTING"));
-
-            List<string> urls = new List<string> {
-                etHkUrl
-            };
-
-            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
-
-            List<Task> tasks = new List<Task>();
-
-            foreach (string url in urls)
+            await RunJobs(new List<string>
             {
-                tasks.Add(GenericRequestClient(url));
-            }
-
-            await Task.WhenAll(tasks);
-
-            stopwatch.Stop(); // Stop the stopwatch
-
-            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+                "ET_HK_URL_SETTING"
+            });
         }
 
         public async Task RunEtUsProcessJobs()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start(); // Start the stopwatch
-
-            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Eu jobs");
-            string etEtfusUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_ETFUS_URL_SETTING"));
-            string etNasdaqUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_NASDAQ_URL_SETTING"));
-            string etNyseUrl = getEtAccessUrl(Environment.GetEnvironmentVariable("ET_NYSE_URL_SETTING"));
-
-            List<string> urls = new List<string> {
-                etEtfusUrl,
-                etNasdaqUrl, 
-                etNyseUrl
-            };
-
-            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
-
-            List<Task> tasks = new List<Task>();
-
-            foreach (string url in urls)
+            await RunJobs(new List<string>
             {
-                tasks.Add(GenericRequestClient(url));
-            }
-
-            await Task.WhenAll(tasks);
-
-            stopwatch.Stop(); // Stop the stopwatch
-
-            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
-        }
+                "ET_ETFUS_URL_SETTING",
+                "ET_NASDAQ_URL_SETTING",
+                "ET_NYSE_URL_SETTING"
+            });
+    }
 
         public string getEtAccessUrl(string settingString)
         {

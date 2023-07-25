@@ -21,7 +21,7 @@ namespace Screen.SchedulerFunctionProj
 
             log.LogInformation("In RunDailyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
 
-            // Check if the current hour is 18 (6 PM)
+            // Check if the current hour is 18 (6 PM) - asx job
             if (currentTime.Hour == 18)
             {
                 // call Etoro scan
@@ -29,6 +29,35 @@ namespace Screen.SchedulerFunctionProj
 
                 await scheduleManager.RunEtAusProcessJobs();
             }
+
+            // Check if the current hour is 21 (9 PM) - Hongkong job
+            if (currentTime.Hour == 21)
+            {
+                // call Etoro scan
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+
+                await scheduleManager.RunEtHkProcessJobs();
+            }
+
+            // Check if the current hour is 5 (5 AM) - Eu job
+            if (currentTime.Hour == 5)
+            {
+                // call Etoro scan
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+
+                await scheduleManager.RunEtEuProcessJobs();
+            }
+
+            // Check if the current hour is 10 (10 AM) - Us job
+            if (currentTime.Hour == 10)
+            {
+                // call Etoro scan
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+
+                await scheduleManager.RunEtUsProcessJobs();
+            }
+
+
         }
 
 
