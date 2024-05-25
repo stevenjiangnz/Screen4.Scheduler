@@ -110,30 +110,32 @@ namespace Screen.SchedulerFunctionProj
         {
             await RunJobs(new List<string>
             {
-                "ET_ETFUK_URL_SETTING",
-                "ET_UK_URL_SETTING",
-                "ET_DE_URL_SETTING",
-                "ET_PA_URL_SETTING",
-                "ET_MI_URL_SETTING",
-                "ET_EU_URL_SETTING"
+                "ET_ETFUK_URL_SETTING"
+                //,
+                //"ET_UK_URL_SETTING",
+                //"ET_DE_URL_SETTING",
+                //"ET_PA_URL_SETTING",
+                //"ET_MI_URL_SETTING",
+                //"ET_EU_URL_SETTING"
             });
         }
 
         public async Task RunEtHkProcessJobs()
         {
-            await RunJobs(new List<string>
-            {
-                "ET_HK_URL_SETTING"
-            });
+            //await RunJobs(new List<string>
+            //{
+            //    "ET_HK_URL_SETTING"
+            //});
         }
 
         public async Task RunEtUsProcessJobs()
         {
             await RunJobs(new List<string>
             {
-                "ET_ETFUS_URL_SETTING",
-                "ET_NASDAQ_URL_SETTING",
-                "ET_NYSE_URL_SETTING"
+                "ET_ETFUS_URL_SETTING"
+                //,
+                //"ET_NASDAQ_URL_SETTING",
+                //"ET_NYSE_URL_SETTING"
             });
     }
 
