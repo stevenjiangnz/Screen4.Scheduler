@@ -14,12 +14,44 @@ namespace Screen.SchedulerFunctionProj
     {
         private readonly ILogger _logger;
         private string _etUrlTemplate;
+        private string _asxetfUrlTemplate;
         public ScheduleManager(ILogger log)
         {
             this._logger = log;
 
             this._etUrlTemplate = Environment.GetEnvironmentVariable("ET_AUS_URL_TEMPLATE");
+            this._asxetfUrlTemplate = Environment.GetEnvironmentVariable("ASX_ETF_URL_TEMPLATE");
         }
+
+        public async Task RunAsxEtfProcessJobs()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Aus jobs");
+            string processUrl = Environment.GetEnvironmentVariable("ASX_ETF_URL_TEMPLATE");
+            string asxEtfUrl = getAsxEtfAccessUrl(Environment.GetEnvironmentVariable("ASX_ETF_URL_SETTING"));
+
+            List<string> urls = new List<string> {
+                asxEtfUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
 
         public async Task RunEtAusProcessJobs()
         {
@@ -117,6 +149,21 @@ namespace Screen.SchedulerFunctionProj
             }
 
             url = string.Format(this._etUrlTemplate, settings[0], settings[1]);
+            return url;
+        }
+
+        public string getAsxEtfAccessUrl(string settingString)
+        {
+            string url = string.Empty;
+
+            var settings = settingString.Split(';');
+
+            if (settings.Length != 2)
+            {
+                throw new ArgumentException($"Invalid setting string: {settingString}");
+            }
+
+            url = string.Format(this._asxetfUrlTemplate, settings[0], settings[1]);
             return url;
         }
 
