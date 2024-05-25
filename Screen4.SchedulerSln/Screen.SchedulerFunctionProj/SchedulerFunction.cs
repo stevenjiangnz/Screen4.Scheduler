@@ -13,52 +13,36 @@ namespace Screen.SchedulerFunctionProj
     public class SchedulerFunction
     {
         [FunctionName("schedulerdaily")]
-        public static async Task RunDailyProcess([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task RunDailyProcess([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
-            // Define the time zone and get the current time in that time zone
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
 
-            log.LogInformation("In RunDailyProcess " + currentTime.ToString() + "hour: " + currentTime.Hour);
+            log.LogInformation("In RunDailyProcess at " + currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            // Check if the current hour is 18 (6 PM) - asx job
-            if (currentTime.Hour == 18)
+            // Perform checks at specific minute past specific hours
+            if (currentTime.Hour == 18 && currentTime.Minute == 8)
             {
-                // call Etoro scan
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-
                 await scheduleManager.RunEtAusProcessJobs();
                 await scheduleManager.RunAsxEtfProcessJobs();
             }
-
-            // Check if the current hour is 21 (9 PM) - Hongkong job
-            if (currentTime.Hour == 21)
+            else if (currentTime.Hour == 21 && currentTime.Minute == 15) // Example: 21:15
             {
-                // call Etoro scan
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-
                 await scheduleManager.RunEtHkProcessJobs();
             }
-
-            // Check if the current hour is 5 (5 AM) - Eu job
-            if (currentTime.Hour == 5)
+            else if (currentTime.Hour == 5 && currentTime.Minute == 30) // Example: 05:30
             {
-                // call Etoro scan
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-
                 await scheduleManager.RunEtEuProcessJobs();
             }
-
-            // Check if the current hour is 10 (10 AM) - Us job
-            if (currentTime.Hour == 10)
+            else if (currentTime.Hour == 10 && currentTime.Minute == 45) // Example: 10:45
             {
-                // call Etoro scan
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-
                 await scheduleManager.RunEtUsProcessJobs();
             }
         }
-
 
         [FunctionName("schedulerweekly")]
         public static async Task RunWeeklyProcess([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
