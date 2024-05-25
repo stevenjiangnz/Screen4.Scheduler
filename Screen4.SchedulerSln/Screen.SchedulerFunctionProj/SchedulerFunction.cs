@@ -28,6 +28,7 @@ namespace Screen.SchedulerFunctionProj
                 ScheduleManager scheduleManager = new ScheduleManager(log);
 
                 await scheduleManager.RunEtAusProcessJobs();
+                await scheduleManager.RunAsxEtfProcessJobs();
             }
 
             // Check if the current hour is 21 (9 PM) - Hongkong job
@@ -56,8 +57,6 @@ namespace Screen.SchedulerFunctionProj
 
                 await scheduleManager.RunEtUsProcessJobs();
             }
-
-
         }
 
 
@@ -101,7 +100,7 @@ namespace Screen.SchedulerFunctionProj
         {
             ScheduleManager scheduleManager = new ScheduleManager(log);
 
-            await scheduleManager.RunEtUsProcessJobs();
+            await scheduleManager.RunAsxEtfProcessJobs();
 
             return new OkObjectResult("done test");
 
