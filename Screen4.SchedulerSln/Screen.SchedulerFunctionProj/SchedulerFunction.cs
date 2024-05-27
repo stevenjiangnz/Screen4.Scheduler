@@ -35,6 +35,13 @@ namespace Screen.SchedulerFunctionProj
 
             log.LogInformation("In RunDailyProcess at " + currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
 
+            // Check if today is a weekend day
+            if (currentTime.DayOfWeek == DayOfWeek.Saturday || currentTime.DayOfWeek == DayOfWeek.Sunday)
+            {
+                log.LogInformation("Today is a weekend. No processing will occur.");
+                return; // Exit the function if it's a weekend
+            }
+
             // Perform checks at specific times using the local constant time tolerance
             if (IsWithinTimeWindow(currentTime, 18, 0, TimeToleranceInSeconds))
             {
@@ -64,7 +71,6 @@ namespace Screen.SchedulerFunctionProj
                 await scheduleManager.RunEtUsProcessJobs();
             }
         }
-
 
         [FunctionName("schedulerweekly")]
         public static async Task RunWeeklyProcess([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
