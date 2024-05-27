@@ -12,37 +12,59 @@ namespace Screen.SchedulerFunctionProj
 {
     public class SchedulerFunction
     {
-        [FunctionName("schedulerdaily")]
-        public static async Task RunDailyProcess([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        public static bool IsWithinTimeWindow(DateTimeOffset currentTime, int targetHour, int targetMinute, int toleranceInSeconds)
         {
+            // Create a target time based on the current date and specified hour and minute, with seconds set to zero
+            DateTimeOffset targetTime = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, targetHour, targetMinute, 0, currentTime.Offset);
+
+            // Calculate the difference in seconds between the current time and the target time
+            double secondsDifference = Math.Abs((currentTime - targetTime).TotalSeconds);
+
+            // Check if the difference is within the tolerance
+            return secondsDifference <= toleranceInSeconds;
+        }
+
+        // Usage in your Azure Function
+        [FunctionName("schedulerdaily")]
+        public static async Task RunDailyProcess([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+        {
+            const int TimeToleranceInSeconds = 5;  // Define a local constant for the time tolerance
+
             TimeZoneInfo brisbaneTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. Australia Standard Time");
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(DateTimeOffset.Now, brisbaneTimeZone);
 
             log.LogInformation("In RunDailyProcess at " + currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            // Perform checks at specific minute past specific hours
-            if (currentTime.Hour == 18 && currentTime.Minute == 8)
+            // Perform checks at specific times using the local constant time tolerance
+            if (IsWithinTimeWindow(currentTime, 18, 0, TimeToleranceInSeconds))
+            {
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+                await scheduleManager.RunAsxEtfProcessJobs();
+            }
+
+            if (IsWithinTimeWindow(currentTime, 18, 5, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
                 await scheduleManager.RunEtAusProcessJobs();
-                await scheduleManager.RunAsxEtfProcessJobs();
             }
-            else if (currentTime.Hour == 21 && currentTime.Minute == 15) // Example: 21:15
+
+            else if (IsWithinTimeWindow(currentTime, 21, 15, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
                 await scheduleManager.RunEtHkProcessJobs();
             }
-            else if (currentTime.Hour == 5 && currentTime.Minute == 30) // Example: 05:30
+            else if (IsWithinTimeWindow(currentTime, 5, 30, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
                 await scheduleManager.RunEtEuProcessJobs();
             }
-            else if (currentTime.Hour == 10 && currentTime.Minute == 45) // Example: 10:45
+            else if (IsWithinTimeWindow(currentTime, 10, 45, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
                 await scheduleManager.RunEtUsProcessJobs();
             }
         }
+
 
         [FunctionName("schedulerweekly")]
         public static async Task RunWeeklyProcess([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)
