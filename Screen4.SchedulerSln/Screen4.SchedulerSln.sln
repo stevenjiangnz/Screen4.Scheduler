@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Screen.SchedulerFunctionProj", "Screen.SchedulerFunctionProj\Screen.SchedulerFunctionProj.csproj", "{994248C7-6976-4CE5-BC90-ACE36BB9E841}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{3AF6B33C-6936-4CEF-8938-9B2698A10ADD}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflow", "Workflow", "{BA0D981D-EF16-48A5-A038-BCA021BDC9B4}"
 	ProjectSection(SolutionItems) = preProject
