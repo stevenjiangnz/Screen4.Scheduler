@@ -30,7 +30,7 @@ bld/
 [Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
-.vs/  # Uncomment this line to ignore the .vs folder
+Screen4.SchedulerSln/.vs/**  # Uncomment this line to ignore the .vs folder
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -198,3 +198,4 @@ AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
+/.gitignore
