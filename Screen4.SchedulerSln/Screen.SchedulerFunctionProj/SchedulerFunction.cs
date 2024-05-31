@@ -1,7 +1,6 @@
 using System;
 using System.Net.Http;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -52,23 +51,23 @@ namespace Screen.SchedulerFunctionProj
             if (IsWithinTimeWindow(currentTime, 18, 5, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                await scheduleManager.RunEtAusProcessJobs();
+                //await scheduleManager.RunEtAusProcessJobs();
             }
 
             else if (IsWithinTimeWindow(currentTime, 21, 15, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                await scheduleManager.RunEtHkProcessJobs();
+                //await scheduleManager.RunEtHkProcessJobs();
             }
             else if (IsWithinTimeWindow(currentTime, 5, 30, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                await scheduleManager.RunEtEuProcessJobs();
+                //await scheduleManager.RunEtEuProcessJobs();
             }
             else if (IsWithinTimeWindow(currentTime, 10, 45, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                await scheduleManager.RunEtUsProcessJobs();
+                //await scheduleManager.RunEtUsProcessJobs();
             }
         }
 
@@ -86,20 +85,20 @@ namespace Screen.SchedulerFunctionProj
 
                 string processUrl = Environment.GetEnvironmentVariable("PROCESS_URL") + "&interval=w";
 
-                using (HttpClient client = new HttpClient())
-                {
-                    HttpResponseMessage response = await client.GetAsync(processUrl);
+                //using (HttpClient client = new HttpClient())
+                //{
+                //    HttpResponseMessage response = await client.GetAsync(processUrl);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        log.LogInformation("Response: " + responseContent);
-                    }
-                    else
-                    {
-                        log.LogError("Request failed with status code: " + response.StatusCode);
-                    }
-                }
+                //    if (response.IsSuccessStatusCode)
+                //    {
+                //        string responseContent = await response.Content.ReadAsStringAsync();
+                //        log.LogInformation("Response: " + responseContent);
+                //    }
+                //    else
+                //    {
+                //        log.LogError("Request failed with status code: " + response.StatusCode);
+                //    }
+                //}
 
             }
         }
