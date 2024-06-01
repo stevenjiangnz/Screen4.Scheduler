@@ -35,7 +35,7 @@ namespace Screen.SchedulerFunctionProj
             log.LogInformation("In RunDailyProcess at " + currentTime.ToString("yyyy-MM-dd HH:mm:ss"));
 
             // Check if today is a weekend day
-            if (currentTime.DayOfWeek == DayOfWeek.Saturday || currentTime.DayOfWeek == DayOfWeek.Sunday)
+            if (currentTime.DayOfWeek == DayOfWeek.Sunday)
             {
                 log.LogInformation("Today is a weekend. No processing will occur.");
                 return; // Exit the function if it's a weekend
@@ -51,7 +51,7 @@ namespace Screen.SchedulerFunctionProj
             if (IsWithinTimeWindow(currentTime, 18, 5, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                //await scheduleManager.RunEtAusProcessJobs();
+                await scheduleManager.RunForexProcessJobs();
             }
 
             else if (IsWithinTimeWindow(currentTime, 21, 15, TimeToleranceInSeconds))

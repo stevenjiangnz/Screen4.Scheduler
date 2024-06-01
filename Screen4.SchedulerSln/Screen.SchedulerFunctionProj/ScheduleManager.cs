@@ -29,11 +29,41 @@ namespace Screen.SchedulerFunctionProj
             stopwatch.Start(); // Start the stopwatch
 
             this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Aus jobs");
-            string processUrl = Environment.GetEnvironmentVariable("ASX_ETF_URL_TEMPLATE");
-            string asxEtfUrl = getAsxEtfAccessUrl(Environment.GetEnvironmentVariable("ASX_ETF_URL_SETTING"));
+            string processUrlTemplate = Environment.GetEnvironmentVariable("ASX_ETF_URL_TEMPLATE");
+            string asxEtfUrl = getAccessUrl(Environment.GetEnvironmentVariable("ASX_ETF_URL_SETTING"), processUrlTemplate);
 
             List<string> urls = new List<string> {
                 asxEtfUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+
+        public async Task RunForexProcessJobs()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to start Forex jobs");
+            string processUrlTemplate = Environment.GetEnvironmentVariable("FOREX_URL_TEMPLATE");
+            string forexUrl = getAccessUrl(Environment.GetEnvironmentVariable("FOREX_URL_SETTING"), processUrlTemplate);
+
+            List<string> urls = new List<string> {
+                forexUrl
             };
 
             this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
@@ -154,7 +184,7 @@ namespace Screen.SchedulerFunctionProj
             return url;
         }
 
-        public string getAsxEtfAccessUrl(string settingString)
+        public string getAccessUrl(string settingString, string template)
         {
             string url = string.Empty;
 
@@ -165,7 +195,7 @@ namespace Screen.SchedulerFunctionProj
                 throw new ArgumentException($"Invalid setting string: {settingString}");
             }
 
-            url = string.Format(this._asxetfUrlTemplate, settings[0], settings[1]);
+            url = string.Format(template, settings[0], settings[1]);
             return url;
         }
 
