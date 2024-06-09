@@ -83,6 +83,41 @@ namespace Screen.SchedulerFunctionProj
         }
 
 
+        public async Task RunIbkrUsProcessJobs(int batch)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start(); // Start the stopwatch
+
+            this._logger.LogInformation($"{nameof(ScheduleManager)}, About to RunIbkrUsProcess Jobs");
+            string processUrlTemplate = Environment.GetEnvironmentVariable("IBKR_URL_TEMPLATE");
+            string settingString = Environment.GetEnvironmentVariable("US_ETF_URL_SETTING");
+ 
+            var settings = settingString.Split(';');
+
+            string processUrl = string.Format(processUrlTemplate, settings[0], settings[1], batch);
+
+            List<string> urls = new List<string> {
+                processUrl
+            };
+
+            this._logger.LogInformation($"About to request {urls.Count} requests \n {urls.ToJsonString()}");
+
+            List<Task> tasks = new List<Task>();
+
+            foreach (string url in urls)
+            {
+                tasks.Add(GenericRequestClient(url));
+            }
+
+            await Task.WhenAll(tasks);
+
+            stopwatch.Stop(); // Stop the stopwatch
+
+            this._logger.LogInformation($"All jobs done in {stopwatch.Elapsed.TotalSeconds} seconds");
+        }
+
+
+
         public async Task RunEtAusProcessJobs()
         {
             Stopwatch stopwatch = new Stopwatch();
