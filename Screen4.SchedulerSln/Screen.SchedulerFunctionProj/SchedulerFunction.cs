@@ -64,11 +64,27 @@ namespace Screen.SchedulerFunctionProj
                 ScheduleManager scheduleManager = new ScheduleManager(log);
                 //await scheduleManager.RunEtEuProcessJobs();
             }
-            else if (IsWithinTimeWindow(currentTime, 10, 45, TimeToleranceInSeconds))
+            else if (IsWithinTimeWindow(currentTime, 8, 45, TimeToleranceInSeconds))
             {
                 ScheduleManager scheduleManager = new ScheduleManager(log);
-                //await scheduleManager.RunEtUsProcessJobs();
+                await scheduleManager.RunIbkrUsProcessJobs(0);
             }
+            else if (IsWithinTimeWindow(currentTime, 8, 50, TimeToleranceInSeconds))
+            {
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+                await scheduleManager.RunIbkrUsProcessJobs(1);
+            }
+            else if (IsWithinTimeWindow(currentTime, 8, 55, TimeToleranceInSeconds))
+            {
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+                await scheduleManager.RunIbkrUsProcessJobs(2);
+            }
+            else if (IsWithinTimeWindow(currentTime, 9, 00, TimeToleranceInSeconds))
+            {
+                ScheduleManager scheduleManager = new ScheduleManager(log);
+                await scheduleManager.RunIbkrUsProcessJobs(3);
+            }
+
         }
 
         [FunctionName("schedulerweekly")]
@@ -111,7 +127,7 @@ namespace Screen.SchedulerFunctionProj
         {
             ScheduleManager scheduleManager = new ScheduleManager(log);
 
-            await scheduleManager.RunAsxEtfProcessJobs();
+            await scheduleManager.RunIbkrUsProcessJobs(3);
 
             return new OkObjectResult("done test");
 
